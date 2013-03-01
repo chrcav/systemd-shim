@@ -1,0 +1,15 @@
+Source: systemd-shim
+Section: admin
+Priority: extra
+Maintainer: Sebastien Bacher <seb128@ubuntu.com>
+Build-Depends: debhelper (>= 9), dh-autoreconf, libglib2.0-dev
+Standards-Version: 3.9.4
+
+Package: systemd-shim
+Architecture: any
+Depends: ${shlibs:Depends}, 
+         ${misc:Depends}
+Conflicts: systemd
+Description: shim for systemd
+ This package emulates the systemd function that are required to run
+ the systemd helpers without using the init service
