@@ -1,3 +1,10 @@
+systemd-shim (2-0ubuntu1) raring; urgency=low
+
+  * New upstream version: Install a ntp-units.d file so that never versions 
+    of timedated don't assume that NTP is impossible.
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Wed, 27 Mar 2013 19:43:26 +0100
+
 systemd-shim (1-0ubuntu1) raring; urgency=low
 
   * New upstream version

@@ -50,8 +50,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = data
-DIST_COMMON = $(dist_dbuspolicy_DATA) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+DIST_COMMON = $(dist_dbuspolicy_DATA) $(dist_ntpunits_DATA) \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -100,8 +100,9 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(dbusservicedir)" \
-	"$(DESTDIR)$(dbuspolicydir)"
-DATA = $(dbusservice_DATA) $(dist_dbuspolicy_DATA)
+	"$(DESTDIR)$(dbuspolicydir)" "$(DESTDIR)$(ntpunitsdir)"
+DATA = $(dbusservice_DATA) $(dist_dbuspolicy_DATA) \
+	$(dist_ntpunits_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -195,6 +196,8 @@ top_srcdir = @top_srcdir@
 dbusservicedir = $(prefix)/share/dbus-1/system-services
 dbusservice_DATA = org.freedesktop.systemd1.service
 CLEANFILES = $(dbusservice_DATA)
+ntpunitsdir = $(prefix)/lib/systemd/ntp-units.d
+dist_ntpunits_DATA = systemd-shim.list
 dbuspolicydir = $(sysconfdir)/dbus-1/system.d
 dist_dbuspolicy_DATA = org.freedesktop.systemd1.conf
 all: all-am
@@ -272,6 +275,27 @@ uninstall-dist_dbuspolicyDATA:
 	@list='$(dist_dbuspolicy_DATA)'; test -n "$(dbuspolicydir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(dbuspolicydir)'; $(am__uninstall_files_from_dir)
+install-dist_ntpunitsDATA: $(dist_ntpunits_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_ntpunits_DATA)'; test -n "$(ntpunitsdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(ntpunitsdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(ntpunitsdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(ntpunitsdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(ntpunitsdir)" || exit $$?; \
+	done
+
+uninstall-dist_ntpunitsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_ntpunits_DATA)'; test -n "$(ntpunitsdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(ntpunitsdir)'; $(am__uninstall_files_from_dir)
 tags: TAGS
 TAGS:
 
@@ -313,7 +337,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(dbusservicedir)" "$(DESTDIR)$(dbuspolicydir)"; do \
+	for dir in "$(DESTDIR)$(dbusservicedir)" "$(DESTDIR)$(dbuspolicydir)" "$(DESTDIR)$(ntpunitsdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -367,7 +391,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dbusserviceDATA install-dist_dbuspolicyDATA
+install-data-am: install-dbusserviceDATA install-dist_dbuspolicyDATA \
+	install-dist_ntpunitsDATA
 
 install-dvi: install-dvi-am
 
@@ -411,7 +436,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dbusserviceDATA uninstall-dist_dbuspolicyDATA
+uninstall-am: uninstall-dbusserviceDATA uninstall-dist_dbuspolicyDATA \
+	uninstall-dist_ntpunitsDATA
 
 .MAKE: install-am install-strip
 
@@ -419,14 +445,15 @@ uninstall-am: uninstall-dbusserviceDATA uninstall-dist_dbuspolicyDATA
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am \
 	install-dbusserviceDATA install-dist_dbuspolicyDATA \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
-	uninstall-am uninstall-dbusserviceDATA \
-	uninstall-dist_dbuspolicyDATA
+	install-dist_ntpunitsDATA install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-dbusserviceDATA uninstall-dist_dbuspolicyDATA \
+	uninstall-dist_ntpunitsDATA
 
 
 org.freedesktop.systemd1.service: Makefile
