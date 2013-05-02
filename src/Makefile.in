@@ -61,10 +61,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(libexecdir)"
 PROGRAMS = $(libexec_PROGRAMS)
-am__objects_1 = gsd-datetime-mechanism-debian.$(OBJEXT)
-am__objects_2 = util.$(OBJEXT) virt.$(OBJEXT)
-am_systemd_shim_OBJECTS = $(am__objects_1) $(am__objects_2) \
-	unit.$(OBJEXT) systemd-shim.$(OBJEXT)
+am__objects_1 = util.$(OBJEXT) virt.$(OBJEXT)
+am_systemd_shim_OBJECTS = $(am__objects_1) unit.$(OBJEXT) \
+	ntp-unit.$(OBJEXT) power-unit.$(OBJEXT) systemd-shim.$(OBJEXT)
 systemd_shim_OBJECTS = $(am_systemd_shim_OBJECTS)
 am__DEPENDENCIES_1 =
 systemd_shim_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -188,10 +187,6 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CFLAGS = $(gio_CFLAGS)
-gsd_imports = \
-	gsd-datetime-mechanism-debian.h		\
-	gsd-datetime-mechanism-debian.c
-
 systemd_imports = \
 	macro.h		\
 	util.h		\
@@ -201,10 +196,11 @@ systemd_imports = \
 
 systemd_shim_LDADD = $(gio_LIBS)
 systemd_shim_SOURCES = \
-	$(gsd_imports)		\
 	$(systemd_imports)	\
 	unit.h			\
 	unit.c			\
+	ntp-unit.c		\
+	power-unit.c		\
 	systemd-iface.h		\
 	systemd-shim.c
 
@@ -292,7 +288,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gsd-datetime-mechanism-debian.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ntp-unit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/power-unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/systemd-shim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@
