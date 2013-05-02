@@ -52,7 +52,7 @@ lookup_unit (GVariant  *parameters,
   else if (g_str_equal (unit_name, "reboot.target"))
     unit = power_unit_new (POWER_REBOOT);
 
-  else if (g_str_equal (unit_name, "shutdown.target"))
+  else if (g_str_equal (unit_name, "shutdown.target") || g_str_equal (unit_name, "poweroff.target"))
     unit = power_unit_new (POWER_OFF);
 
   if (unit == NULL)

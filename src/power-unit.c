@@ -20,6 +20,9 @@
 #include "unit.h"
 
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 typedef UnitClass PowerUnitClass;
 static GType power_unit_get_type (void);
@@ -52,7 +55,8 @@ power_unit_start (Unit *unit)
   if (pu->action == POWER_OFF || pu->action == POWER_REBOOT)
     {
       in_shutdown = TRUE;
-      system (power_cmds[pu->action]);
+      if (system (power_cmds[pu->action]) != 0)
+        g_warning ("Error while running '%s'", power_cmds[pu->action]);
     }
   else
     {
@@ -70,7 +74,31 @@ power_unit_start (Unit *unit)
       if (pu->action == POWER_SUSPEND && last_suspend_time + G_TIME_SPAN_SECOND > g_get_monotonic_time ())
         return;
 
-      system (power_cmds[pu->action]);
+      /* pm-utils might not have been installed, so go the direct route
+       * if we find that we don't have it...
+       */
+      if (g_file_test (power_cmds[pu->action], G_FILE_TEST_IS_EXECUTABLE))
+        {
+          if (system (power_cmds[pu->action]) != 0)
+            g_warning ("Error while running '%s'", power_cmds[pu->action]);
+        }
+      else
+        {
+          const gchar *kind;
+          gint fd;
+
+          fd = open ("/sys/power/state", O_WRONLY);
+          if (fd == -1)
+            {
+              g_warning ("Could not open /sys/power/state");
+              return;
+            }
+
+          kind = (pu->action == POWER_SUSPEND) ? "mem" : "disk";
+          if (write (fd, kind, strlen (kind)) != strlen (kind))
+            g_warning ("Failed to write() to /sys/power/state?!?");
+          close (fd);
+        }
 
       if (pu->action == POWER_SUSPEND)
         last_suspend_time = g_get_monotonic_time ();

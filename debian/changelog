@@ -1,6 +1,12 @@
+systemd-shim (3+real-0ubuntu1) saucy; urgency=low
+
+  * Upload the real version 3 tarball this time, fixing poweroff.target.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 02 May 2013 11:14:19 -0700
+
 systemd-shim (3-0ubuntu1) saucy; urgency=low
 
-  * New upstream release:
+  * New upstream release
   * Add a watch file.
   * Suggest pm-utils.
 
