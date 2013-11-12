@@ -1,3 +1,17 @@
+systemd-shim (4-0ubuntu1) trusty; urgency=low
+
+  * New upstream release:
+    - Flush bus before exiting on idle to avoid a race where a message is
+      queued up but not yet sent. (LP: #1184262, part 1)
+    - Adjust the definition of "inactivity" to be 10 seconds after done
+      processing the last request instead of 10 seconds after we started.
+      This matters for long-running tasks like suspend. (LP: #1184262, part 2)
+    - Don't exit-on-idle while shutting down to avoid losing the flag that
+      tells us we are in the middle of a shutdown. (Necessary, but not
+      sufficient for LP #1211514)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Nov 2013 09:31:19 +0100
+
 systemd-shim (3+real-0ubuntu1) saucy; urgency=low
 
   * Upload the real version 3 tarball this time, fixing poweroff.target.

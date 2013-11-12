@@ -29,7 +29,20 @@
 static gboolean
 exit_on_inactivity (gpointer user_data)
 {
-  exit (0);
+  extern gboolean in_shutdown;
+
+  if (!in_shutdown)
+    {
+      GDBusConnection *session_bus;
+
+      session_bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
+      g_dbus_connection_flush_sync (session_bus, NULL, NULL);
+      g_object_unref (session_bus);
+
+      exit (0);
+    }
+
+  return FALSE;
 }
 
 static void
@@ -55,8 +68,6 @@ shim_method_call (GDBusConnection       *connection,
 {
   GError *error = NULL;
 
-  had_activity ();
-
   if (g_str_equal (method_name, "GetUnitFileState"))
     {
       Unit *unit;
@@ -68,26 +79,26 @@ shim_method_call (GDBusConnection       *connection,
           g_dbus_method_invocation_return_value (invocation,
                                                  g_variant_new ("(s)", unit_get_state (unit)));
           g_object_unref (unit);
-          return;
+          goto success;
         }
     }
 
   else if (g_str_equal (method_name, "DisableUnitFiles"))
     {
       g_dbus_method_invocation_return_value (invocation, g_variant_new ("(a(sss))", NULL));
-      return;
+      goto success;
     }
 
   else if (g_str_equal (method_name, "EnableUnitFiles"))
     {
       g_dbus_method_invocation_return_value (invocation, g_variant_new ("(ba(sss))", TRUE, NULL));
-      return;
+      goto success;
     }
 
   else if (g_str_equal (method_name, "Reload"))
     {
       g_dbus_method_invocation_return_value (invocation, NULL);
-      return;
+      goto success;
     }
 
   else if (g_str_equal (method_name, "StopUnit"))
@@ -101,7 +112,7 @@ shim_method_call (GDBusConnection       *connection,
           unit_stop (unit);
           g_dbus_method_invocation_return_value (invocation, g_variant_new ("(o)", "/"));
           g_object_unref (unit);
-          return;
+          goto success;
         }
     }
 
@@ -119,7 +130,7 @@ shim_method_call (GDBusConnection       *connection,
                                          "org.freedesktop.systemd1.Manager", "JobRemoved",
                                          g_variant_new ("(uoss)", 0, "/", "", ""), NULL);
           g_object_unref (unit);
-          return;
+          goto success;
         }
     }
 
@@ -128,6 +139,9 @@ shim_method_call (GDBusConnection       *connection,
 
   g_dbus_method_invocation_return_gerror (invocation, error);
   g_error_free (error);
+
+success:
+  had_activity ();
 }
 
 static GVariant *
