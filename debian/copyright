@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: systemd-shim
-Source: http://people.gnome.org/~ryanl/
+Source: http://people.gnome.org/~desrt/
 
 Files: *
 Copyright: Copyright: 2010 Lennart Poettering
