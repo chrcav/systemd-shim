@@ -1,0 +1,25 @@
+#!/bin/sh
+# Check D-BUS activation and 10 s inactivity timeout
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+set -eux
+
+CALL_MGR="gdbus call -y -d org.freedesktop.systemd1 -o /org/freedesktop/systemd1 -m org.freedesktop.systemd1.Manager"
+
+# should not run by default
+pidof systemd-shim && { echo "FAIL: found running PID"; exit 1; }
+
+# activate it
+${CALL_MGR}.Reload
+
+# should be running now
+PID=`pidof systemd-shim`
+[ -n "$PID" ]
+
+# should still be running with the same pid after 5 s
+sleep 5
+[ "`pidof systemd-shim`" = "$PID" ]
+
+# should time out after 10 s, so wait another 7
+sleep 7
+pidof systemd-shim && { echo "FAIL: not timing out after 10s"; exit 1; }
+true
