@@ -1,3 +1,9 @@
+systemd-shim (6-1) unstable; urgency=medium
+
+  * Initial upload to Debian.
+
+ -- Steve Langasek <vorlon@debian.org>  Sat, 28 Dec 2013 21:05:01 +0000
+
 systemd-shim (6-0ubuntu1) trusty; urgency=low
 
   * New upstream release:
