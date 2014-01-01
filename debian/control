@@ -12,7 +12,6 @@ Package: systemd-shim
 Architecture: any
 Depends: ${shlibs:Depends}, 
          ${misc:Depends}
-Conflicts: systemd
 Suggests: pm-utils
 Description: shim for systemd
  This package emulates the systemd function that are required to run

@@ -1,3 +1,11 @@
+systemd-shim (6-2) unstable; urgency=medium
+
+  * Add diversions for the systemd package, and move the systemd-shim dbus
+    file to a different filename under /etc/dbus-1 so that we can drop the
+    Conflicts with systemd.
+
+ -- Steve Langasek <vorlon@debian.org>  Wed, 01 Jan 2014 10:11:19 +0000
+
 systemd-shim (6-1) unstable; urgency=medium
 
   * Initial upload to Debian.
