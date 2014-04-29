@@ -1,0 +1,86 @@
+Description: Sync the dbus policy with the systemd upstream policy
+ The dbus security policy for systemd-shim currently differs from that of
+ systemd upstream.  This difference is unnecessary; the security policy
+ should be the same whether or not all the listed interfaces are
+ implemented, avoiding any problems when both policy files are on the
+ system and systemd is running as pid1.
+Bug-Debian: http://bugs.debian.org/746242
+Author: Steve Langasek <vorlon@debian.org>
+
+=== modified file 'data/org.freedesktop.systemd1.conf'
+--- a/data/org.freedesktop.systemd1.conf	2013-03-01 11:42:18 +0000
++++ b/data/org.freedesktop.systemd1.conf	2014-04-29 06:55:20 +0000
+@@ -6,8 +6,8 @@
+   This file is part of systemd.
+ 
+   systemd is free software; you can redistribute it and/or modify it
+-  under the terms of the GNU General Public License as published by
+-  the Free Software Foundation; either version 2 of the License, or
++  under the terms of the GNU Lesser General Public License as published by
++  the Free Software Foundation; either version 2.1 of the License, or
+   (at your option) any later version.
+ -->
+ 
+@@ -19,6 +19,10 @@
+                 <!-- Root clients can do everything -->
+                 <allow send_destination="org.freedesktop.systemd1"/>
+                 <allow receive_sender="org.freedesktop.systemd1"/>
++
++                <!-- systemd may receive activator requests -->
++                <allow receive_interface="org.freedesktop.systemd1.Activator"
++                       receive_member="ActivationRequest"/>
+         </policy>
+ 
+         <policy context="default">
+@@ -38,6 +42,50 @@
+                        send_interface="org.freedesktop.DBus.Properties"
+                        send_member="GetAll"/>
+ 
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="GetUnit"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="GetUnitByPID"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="LoadUnit"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="GetJob"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="ListUnits"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="ListUnitFiles"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="GetUnitFileState"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="ListJobs"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="Subscribe"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="Unsubscribe"/>
++
++                <allow send_destination="org.freedesktop.systemd1"
++                       send_interface="org.freedesktop.systemd1.Manager"
++                       send_member="Dump"/>
++
+                 <allow receive_sender="org.freedesktop.systemd1"/>
+         </policy>
+ 
+

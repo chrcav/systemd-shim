@@ -1,3 +1,18 @@
+systemd-shim (6-3) unstable; urgency=medium
+
+  [ Martin Pitt ]
+  * Mark autopkgtest with "isolation-machine" as this test can't run in
+    schroot or LXC.
+
+  [ Steve Langasek ]
+  * Sync /etc/dbus-1/system.d/org.freedesktop.systemd-shim.conf with
+    /etc/dbus-1/system.d/org.freedesktop.systemd1.conf; since this only
+    governs the security policy there's no reason for it to be different
+    between the two implementations even though some of the declared
+    interfaces will not be available on systemd-shim.  Closes: #746242.
+
+ -- Steve Langasek <vorlon@debian.org>  Tue, 29 Apr 2014 07:49:10 +0000
+
 systemd-shim (6-2) unstable; urgency=medium
 
   * Add diversions for the systemd package, and move the systemd-shim dbus
