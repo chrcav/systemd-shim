@@ -1,3 +1,11 @@
+systemd-shim (6-4) unstable; urgency=medium
+
+  * Merge cgmanager support from Ubuntu; thanks to Serge Hallyn and
+    Martin Pitt.  Closes: #752939.
+  * Fix wrong path used in the .maintscript file.  Closes: #748791.
+
+ -- Steve Langasek <vorlon@debian.org>  Fri, 25 Jul 2014 16:48:09 +0000
+
 systemd-shim (6-3) unstable; urgency=medium
 
   [ Martin Pitt ]

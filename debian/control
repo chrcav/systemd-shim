@@ -10,8 +10,9 @@ XS-Testsuite: autopkgtest
 
 Package: systemd-shim
 Architecture: any
-Depends: ${shlibs:Depends}, 
-         ${misc:Depends}
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         cgmanager
 Suggests: pm-utils
 Description: shim for systemd
  This package emulates the systemd function that are required to run
