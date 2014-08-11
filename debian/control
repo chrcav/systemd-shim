@@ -9,7 +9,7 @@ Vcs-Browser: http://anonscm.debian.org/loggerhead/collab-maint/systemd-shim/trun
 XS-Testsuite: autopkgtest
 
 Package: systemd-shim
-Architecture: any
+Architecture: linux-any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          cgmanager
