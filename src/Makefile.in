@@ -90,8 +90,9 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(libexecdir)"
 PROGRAMS = $(libexec_PROGRAMS)
 am__objects_1 = util.$(OBJEXT) virt.$(OBJEXT)
-am_systemd_shim_OBJECTS = $(am__objects_1) unit.$(OBJEXT) \
-	ntp-unit.$(OBJEXT) power-unit.$(OBJEXT) systemd-shim.$(OBJEXT)
+am_systemd_shim_OBJECTS = $(am__objects_1) cgmanager.$(OBJEXT) \
+	unit.$(OBJEXT) ntp-unit.$(OBJEXT) power-unit.$(OBJEXT) \
+	cgroup-unit.$(OBJEXT) systemd-shim.$(OBJEXT)
 systemd_shim_OBJECTS = $(am_systemd_shim_OBJECTS)
 am__DEPENDENCIES_1 =
 systemd_shim_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -250,10 +251,13 @@ systemd_imports = \
 systemd_shim_LDADD = $(gio_LIBS)
 systemd_shim_SOURCES = \
 	$(systemd_imports)	\
+	cgmanager.h		\
+	cgmanager.c		\
 	unit.h			\
 	unit.c			\
 	ntp-unit.c		\
 	power-unit.c		\
+	cgroup-unit.c		\
 	systemd-iface.h		\
 	systemd-shim.c
 
@@ -344,6 +348,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgmanager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgroup-unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ntp-unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/power-unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/systemd-shim.Po@am__quote@

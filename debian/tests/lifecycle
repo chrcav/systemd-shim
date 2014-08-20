@@ -5,8 +5,8 @@ set -eux
 
 CALL_MGR="gdbus call -y -d org.freedesktop.systemd1 -o /org/freedesktop/systemd1 -m org.freedesktop.systemd1.Manager"
 
-# should not run by default
-pidof systemd-shim && { echo "FAIL: found running PID"; exit 1; }
+# ensure it is not running
+killall systemd-shim || true
 
 # activate it
 ${CALL_MGR}.Reload

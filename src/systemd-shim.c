@@ -101,6 +101,18 @@ shim_method_call (GDBusConnection       *connection,
       goto success;
     }
 
+  else if (g_str_equal (method_name, "Subscribe"))
+    {
+      g_dbus_method_invocation_return_value (invocation, NULL);
+      goto success;
+    }
+
+  else if (g_str_equal (method_name, "Unsubscribe"))
+    {
+      g_dbus_method_invocation_return_value (invocation, NULL);
+      goto success;
+    }
+
   else if (g_str_equal (method_name, "StopUnit"))
     {
       Unit *unit;
@@ -133,6 +145,27 @@ shim_method_call (GDBusConnection       *connection,
           goto success;
         }
     }
+  else if (g_str_equal (method_name, "StartTransientUnit"))
+    {
+      Unit *unit;
+
+      unit = lookup_unit (parameters, &error);
+
+      if (unit)
+        {
+          GVariant *properties;
+
+          properties = g_variant_get_child_value (parameters, 2);
+          unit_start_transient (unit, properties);
+          g_dbus_method_invocation_return_value (invocation, g_variant_new ("(o)", "/"));
+          g_dbus_connection_emit_signal (connection, sender, "/org/freedesktop/systemd1",
+                                         "org.freedesktop.systemd1.Manager", "JobRemoved",
+                                         g_variant_new ("(uoss)", 0, "/", unit_get_state(unit), "done"), NULL);
+          g_variant_unref (properties);
+          g_object_unref (unit);
+          goto success;
+      }
+  }
 
   else
     g_assert_not_reached ();
@@ -202,6 +235,7 @@ main (void)
                   shim_name_lost,
                   NULL, NULL);
 
+  cgmanager_moveself();
   while (1)
     g_main_context_iteration (NULL, TRUE);
 }

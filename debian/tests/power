@@ -6,7 +6,7 @@ set -eu
 CALL_MGR="gdbus call -y -d org.freedesktop.systemd1 -o /org/freedesktop/systemd1 -m org.freedesktop.systemd1.Manager"
 
 # install ephemeral stubs for power management commands
-WRAPPED_CMDS="/usr/sbin/pm-suspend /usr/sbin/pm-hibernate /sbin/poweroff /sbin/reboot"
+WRAPPED_CMDS="/usr/sbin/pm-suspend /usr/sbin/pm-hibernate /sbin/shutdown /sbin/reboot"
 WORKDIR=`mktemp -d`
 /bin/echo -e '#!/bin/sh\necho "$0 $@" >> '$WORKDIR'/log' > $WORKDIR/stub
 chmod 755 $WORKDIR/stub
@@ -70,10 +70,10 @@ ${CALL_MGR}.StartUnit 'hibernate.target' ''
 flush_log
 assert_eq "$LOG" "/usr/sbin/pm-hibernate "
 
-echo "poweroff"
+echo "shutdown"
 ${CALL_MGR}.StartUnit 'shutdown.target' ''
 flush_log
-assert_eq "$LOG" "/sbin/poweroff "
+assert_eq "$LOG" "/sbin/shutdown -h now"
 
 echo "no inactivity timeout after poweroff"
 PID=`pidof systemd-shim`

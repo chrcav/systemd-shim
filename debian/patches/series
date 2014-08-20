@@ -1,4 +1,0 @@
-systemd-policy-sync.patch
-0001-support-logind-cgroup-requests.patch
-0002-main-move-ourselves-into-cgroup-at-startup.patch
-0003-shim-send-the-scope-name-and-done-in-JobRemoved-sign.patch

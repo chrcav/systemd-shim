@@ -1,3 +1,19 @@
+systemd-shim (7-1) unstable; urgency=medium
+
+  * New upstream release:
+    - Provide cgmanager integration to work with logind >= 205.
+    - Use "shutdown -h" instead of "poweroff" to respect /etc/default/halt
+      (LP: #1193944)
+    - Add stubs for Subscribe and Unsubscribe (LP: #1348039)
+  * Drop all patches, included upstream.
+  * debian/tests/lifecycle: Stop assuming that the shim isn't running
+    initially, as it's now often activated during login, upgrade, etc.
+    Instead, kill it manually to re-test D-BUS activation. Fixes autopkgtest
+    regression.
+  * debian/tests/power: Adjust to poweroff → shutdown upstream change.
+
+ -- Martin Pitt <mpitt@debian.org>  Wed, 20 Aug 2014 08:22:08 +0200
+
 systemd-shim (6-5) unstable; urgency=medium
 
   * Mark systemd-shim as Linux-only, since it now requires cgmanager which
