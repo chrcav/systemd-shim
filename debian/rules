@@ -8,3 +8,11 @@ override_dh_install:
 	dh_install
 	mv debian/systemd-shim/etc/dbus-1/system.d/org.freedesktop.systemd1.conf \
 	   debian/systemd-shim/etc/dbus-1/system.d/org.freedesktop.systemd-shim.conf
+
+# StartTransientUnit D-BUS API change in 209
+override_dh_gencontrol:
+	if [ `pkg-config --modversion systemd` -ge 209 ]; then \
+	    dh_gencontrol -- -Vsystemd:Breaks='systemd (<< 209)'; \
+	else \
+	    dh_gencontrol -- -Vsystemd:Breaks='systemd (>= 209)'; \
+	fi

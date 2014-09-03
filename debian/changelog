@@ -1,3 +1,13 @@
+systemd-shim (7-2) unstable; urgency=medium
+
+  * Fix Start TransientUnit signature for systemd >= 209. Check systemd
+    version during package build. Patch from upstream git. (LP: #1351815)
+  * Add systemd build dep for above configure check to work.
+  * Generate Breaks: to systemd >= or << 209, depending on which version we
+    build against.
+
+ -- Martin Pitt <mpitt@debian.org>  Wed, 03 Sep 2014 08:07:00 +0200
+
 systemd-shim (7-1) unstable; urgency=medium
 
   * New upstream release:
