@@ -1,3 +1,11 @@
+systemd-shim (7-3) unstable; urgency=medium
+
+  * debian/patches/0001-cgmanager-stop-doing-async-calls.patch:
+    cgmanager: stop doing async calls; fixes a race condition on login.
+    Thanks to Ryan Lortie <desrt@desrt.ca>.  Closes LP: #1365095.
+
+ -- Steve Langasek <vorlon@debian.org>  Fri, 05 Sep 2014 15:49:39 -0700
+
 systemd-shim (7-2) unstable; urgency=medium
 
   * Fix Start TransientUnit signature for systemd >= 209. Check systemd
