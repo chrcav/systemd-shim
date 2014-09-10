@@ -79,12 +79,13 @@ POST_UNINSTALL = :
 libexec_PROGRAMS = systemd-shim$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/depcomp
+	$(top_srcdir)/build-aux/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
+CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(libexecdir)"
@@ -92,7 +93,7 @@ PROGRAMS = $(libexec_PROGRAMS)
 am__objects_1 = util.$(OBJEXT) virt.$(OBJEXT)
 am_systemd_shim_OBJECTS = $(am__objects_1) cgmanager.$(OBJEXT) \
 	unit.$(OBJEXT) ntp-unit.$(OBJEXT) power-unit.$(OBJEXT) \
-	cgroup-unit.$(OBJEXT) systemd-shim.$(OBJEXT)
+	cgroup-unit.$(OBJEXT) state.$(OBJEXT) systemd-shim.$(OBJEXT)
 systemd_shim_OBJECTS = $(am_systemd_shim_OBJECTS)
 am__DEPENDENCIES_1 =
 systemd_shim_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -108,8 +109,8 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/depcomp
+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
+depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -236,6 +237,8 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
+systemd_CFLAGS = @systemd_CFLAGS@
+systemd_LIBS = @systemd_LIBS@
 target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
@@ -258,6 +261,8 @@ systemd_shim_SOURCES = \
 	ntp-unit.c		\
 	power-unit.c		\
 	cgroup-unit.c		\
+	state.h			\
+	state.c			\
 	systemd-iface.h		\
 	systemd-shim.c
 
@@ -352,6 +357,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgroup-unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ntp-unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/power-unit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/state.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/systemd-shim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@

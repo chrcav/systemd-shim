@@ -27,7 +27,7 @@
 #include <gio/gio.h>
 
 #define CGM_DBUS_ADDRESS          "unix:path=/sys/fs/cgroup/cgmanager/sock"
-#define CGM_REQUIRED_VERSION      6
+#define CGM_REQUIRED_VERSION      8
 
 static GDBusConnection *
 cgmanager_connect (GError **error)
@@ -70,32 +70,16 @@ cgmanager_connect (GError **error)
   return connection;
 }
 
-static void
-log_warning_on_error (GObject      *source,
-                      GAsyncResult *result,
-                      gpointer      user_data)
-{
-  GError *error = NULL;
-  GVariant *reply;
-
-  reply = g_dbus_connection_call_finish (G_DBUS_CONNECTION (source), result, &error);
-
-  if (reply)
-    g_variant_unref (reply);
-  else
-    {
-      g_warning ("cgmanager method call failed: %s.  Use G_DBUS_DEBUG=message for more info.", error->message);
-      g_error_free (error);
-    }
-}
-
-static void
-cgmanager_call (const gchar        *method_name,
-                GVariant           *parameters,
-                const GVariantType *reply_type)
+static gboolean
+cgmanager_call (const gchar         *method_name,
+                GVariant            *parameters,
+                const GVariantType  *reply_type,
+                GVariant           **reply)
 {
   static GDBusConnection *connection;
   static gboolean initialised;
+  GVariant *my_reply = NULL;
+  GError *error = NULL;
 
   /* Use a separate bool to prevent repeated attempts to connect to a
    * defunct cgmanager...
@@ -116,22 +100,39 @@ cgmanager_call (const gchar        *method_name,
     }
 
   if (!connection)
-    return;
+    return FALSE;
 
-  /* Avoid round-trip delays: issue all calls at once and report errors
-   * asynchronously.  The user can enable GDBus debugging if they need
-   * more information about the exact call that failed...
+  if (!reply)
+    reply = &my_reply;
+
+  /* We do this sync because we need to ensure that the calls finish
+   * before we return to _our_ caller saying that this is done.
    */
-  g_dbus_connection_call (connection, NULL, "/org/linuxcontainers/cgmanager",
-                          "org.linuxcontainers.cgmanager0_0", method_name,
-                          parameters, reply_type, G_DBUS_CALL_FLAGS_NONE,
-                          -1, NULL, log_warning_on_error, NULL);
+  *reply = g_dbus_connection_call_sync (connection, NULL, "/org/linuxcontainers/cgmanager",
+                                        "org.linuxcontainers.cgmanager0_0", method_name,
+                                        parameters, reply_type, G_DBUS_CALL_FLAGS_NONE,
+                                        -1, NULL, &error);
+
+  if (!*reply)
+    {
+      if (reply_type)
+        g_warning ("cgmanager method call org.linuxcontainers.cgmanager0_0.%s failed: %s.  "
+                   "Use G_DBUS_DEBUG=message for more info.", method_name, error->message);
+      g_error_free (error);
+
+      return FALSE;
+    }
+
+  if (my_reply)
+    g_variant_unref (my_reply);
+
+  return TRUE;
 }
 
 void
 cgmanager_create (const gchar *path,
                   gint         uid,
-                  guint       *pids,
+                  const guint *pids,
                   guint        n_pids)
 {
   guint i;
@@ -139,28 +140,52 @@ cgmanager_create (const gchar *path,
   if (path[0] == '/')
     path++;
 
-  cgmanager_call ("Create", g_variant_new ("(ss)", "all", path), G_VARIANT_TYPE ("(i)"));
+  cgmanager_call ("Create", g_variant_new ("(ss)", "all", path), G_VARIANT_TYPE ("(i)"), NULL);
 
   if (uid != -1)
-    cgmanager_call ("Chown", g_variant_new ("(ssii)", "all", path, uid, -1), G_VARIANT_TYPE_UNIT);
+    cgmanager_call ("Chown", g_variant_new ("(ssii)", "all", path, uid, -1), G_VARIANT_TYPE_UNIT, NULL);
 
   for (i = 0; i < n_pids; i++)
-    cgmanager_call ("MovePid", g_variant_new ("(ssi)", "all", path, pids[i]), G_VARIANT_TYPE_UNIT);
-
-  cgmanager_call ("RemoveOnEmpty", g_variant_new ("(ss)", "all", path), G_VARIANT_TYPE_UNIT);
+    cgmanager_call ("MovePid", g_variant_new ("(ssi)", "all", path, pids[i]), G_VARIANT_TYPE_UNIT, NULL);
 }
 
-void
+gboolean
 cgmanager_remove (const gchar *path)
 {
   if (path[0] == '/')
     path++;
 
-  cgmanager_call ("Remove", g_variant_new ("(ssi)", "all", path, 1), G_VARIANT_TYPE ("(i)"));
+  return cgmanager_call ("Remove", g_variant_new ("(ssi)", "all", path, 1), G_VARIANT_TYPE ("(i)"), NULL);
 }
 
 void
-cgmanager_moveself (void)
+cgmanager_move_self (void)
 {
-  cgmanager_call ("MovePidAbs", g_variant_new ("(ssi)", "all", "/", getpid()), G_VARIANT_TYPE_UNIT);
+  cgmanager_call ("MovePidAbs", g_variant_new ("(ssi)", "all", "/", getpid ()), G_VARIANT_TYPE_UNIT, NULL);
+}
+
+void
+cgmanager_prune (const gchar *path)
+{
+  cgmanager_call ("Prune", g_variant_new ("(ss)", "all", path), G_VARIANT_TYPE_UNIT, NULL);
+}
+
+void
+cgmanager_kill (const gchar *path)
+{
+  GVariant *reply;
+
+  if (cgmanager_call ("GetTasksRecursive", g_variant_new ("(ss)", "all", path), G_VARIANT_TYPE ("(ai)"), &reply))
+    {
+      GVariantIter *iter;
+      guint32 pid;
+
+      g_variant_get (reply, "(ai)", &iter);
+
+      while (g_variant_iter_next (iter, "i", &pid))
+        kill (pid, SIGKILL);
+
+      g_variant_iter_free (iter);
+      g_variant_unref (reply);
+    }
 }

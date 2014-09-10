@@ -12,7 +12,7 @@ Package: systemd-shim
 Architecture: linux-any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         cgmanager
+         cgmanager (>= 0.32)
 Suggests: pm-utils
 Breaks: ${systemd:Breaks}
 Description: shim for systemd

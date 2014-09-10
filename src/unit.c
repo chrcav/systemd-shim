@@ -32,13 +32,10 @@ unit_class_init (UnitClass *class)
 }
 
 Unit *
-lookup_unit (GVariant  *parameters,
-             GError   **error)
+lookup_unit (const gchar  *unit_name,
+             GError      **error)
 {
-  const gchar *unit_name;
   Unit *unit = NULL;
-
-  g_variant_get_child (parameters, 0, "&s", &unit_name);
 
   if (g_str_equal (unit_name, "ntpd.service"))
     unit = ntp_unit_get ();
@@ -102,4 +99,18 @@ unit_stop (Unit *unit)
   g_return_if_fail (unit != NULL);
 
   return UNIT_GET_CLASS (unit)->stop (unit);
+}
+
+void
+unit_abandon (Unit *unit)
+{
+  g_return_if_fail (unit != NULL);
+
+  if (!UNIT_GET_CLASS (unit)->start_transient)
+    {
+      g_warning ("%s does not implement StartTransient", G_OBJECT_TYPE_NAME (unit));
+      return;
+    }
+
+  return UNIT_GET_CLASS (unit)->abandon (unit);
 }

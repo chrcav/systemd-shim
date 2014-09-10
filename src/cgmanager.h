@@ -27,11 +27,15 @@
 
 void cgmanager_create (const gchar *path,
                        gint         uid,
-                       guint       *pids,
+                       const guint *pids,
                        guint        n_pids);
 
-void cgmanager_remove (const gchar *path);
+void cgmanager_prune (const gchar *path);
 
-void cgmanager_moveself (void);
+gboolean cgmanager_remove (const gchar *path);
+
+void cgmanager_move_self (void);
+
+void cgmanager_kill (const gchar *scope);
 
 #endif /* _cgmanager_h_ */
