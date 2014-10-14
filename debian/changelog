@@ -1,3 +1,10 @@
+systemd-shim (8-3) unstable; urgency=medium
+
+  * debian/patches/dbus-policy-v215.patch: update our dbus policy to match
+    that from systemd 215.  Closes: #765101.
+
+ -- Steve Langasek <vorlon@debian.org>  Tue, 14 Oct 2014 04:54:09 +0000
+
 systemd-shim (8-2) unstable; urgency=medium
 
   * No-change rebuild against systemd 215.
