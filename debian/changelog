@@ -1,3 +1,13 @@
+systemd-shim (8-4) unstable; urgency=medium
+
+  * Drop the dbus policy entirely from this package, as discussed in bug
+    #765101; since the security policy should always be in sync with
+    systemd's, and since the systemd package ships both logind (the consumer
+    of systemd-shim) and this dbus policy, there's no reason to ship this
+    separately rather than relying on the systemd copy.
+
+ -- Steve Langasek <vorlon@debian.org>  Wed, 22 Oct 2014 04:29:44 +0000
+
 systemd-shim (8-3) unstable; urgency=medium
 
   * debian/patches/dbus-policy-v215.patch: update our dbus policy to match

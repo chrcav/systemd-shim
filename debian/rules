@@ -6,8 +6,7 @@
 
 override_dh_install:
 	dh_install
-	mv debian/systemd-shim/etc/dbus-1/system.d/org.freedesktop.systemd1.conf \
-	   debian/systemd-shim/etc/dbus-1/system.d/org.freedesktop.systemd-shim.conf
+	rm -rf debian/systemd-shim/etc
 
 # StartTransientUnit D-BUS API change in 209
 override_dh_gencontrol:
