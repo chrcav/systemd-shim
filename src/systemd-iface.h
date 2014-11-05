@@ -44,10 +44,14 @@ static const gchar *systemd_iface =
     "</method>"
     "<method name='Subscribe'/>"
     "<method name='Unsubscribe'/>"
+    "<property name='Version' type='s' access='read'/>"
     "<property name='Virtualization' type='s' access='read'/>"
    "</interface>"
    "<interface name='org.freedesktop.systemd1.Scope'>"
     "<method name='Abandon'/>"
+   "</interface>"
+   "<interface name='org.freedesktop.systemd1.Unit'>"
+    "<property name='ActiveState' type='s' access='read'/>"
    "</interface>"
   "</node>";
 

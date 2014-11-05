@@ -1,3 +1,13 @@
+systemd-shim (9-1) unstable; urgency=medium
+
+  * New upstream release.
+    - Add org.freedesktop.systemd1.Manager Version property (Closes: #766237)
+    - Clean up closing logind sessions (Closes: #756076)
+  * Add myself to Uploaders: with Steve's consent.
+  * Bump Standards-Version to 3.9.5 (no changes necessary).
+
+ -- Martin Pitt <mpitt@debian.org>  Wed, 05 Nov 2014 21:55:33 +0100
+
 systemd-shim (8-4) unstable; urgency=medium
 
   * Drop the dbus policy entirely from this package, as discussed in bug
