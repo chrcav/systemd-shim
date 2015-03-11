@@ -3,6 +3,21 @@
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 set -eux
 
+if [ -d /run/systemd/system ]; then
+    if [ ! -x /tmp/autopkgtest-reboot ]; then
+        echo "SKIP: testbed does not support reboot"
+        exit 0
+    fi
+    if [ -n "${ADT_REBOOT_MARK:-}" ]; then
+        echo "SKIP: Reboot with upstart still runs systemd; using init= ?"
+        exit 0
+    fi
+    echo "Installing upstart..."
+    apt-get install -y upstart
+    echo "Rebooting into upstart..."
+    /tmp/autopkgtest-reboot b1
+fi
+
 CALL_MGR="gdbus call -y -d org.freedesktop.systemd1 -o /org/freedesktop/systemd1 -m org.freedesktop.systemd1.Manager"
 
 # ensure it is not running
