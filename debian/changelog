@@ -1,3 +1,9 @@
+systemd-shim (9-1bzr2) vivid; urgency=medium
+
+  * autopkgtests: umount /sys/power/state instead of the source
+
+ -- Iain Lane <iain@orangesquash.org.uk>  Thu, 19 Mar 2015 12:27:56 +0000
+
 systemd-shim (9-1bzr1) vivid; urgency=medium
 
   * autopkgtests: The tests won't work when running under systemd; in that

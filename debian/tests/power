@@ -37,7 +37,7 @@ cleanup() {
     echo 'Cleanup...'
     set +e
     for c in $WRAPPED_CMDS; do umount $c; done
-    umount $FAKE_SYS_STATE
+    umount /sys/power/state
     rm -r $WORKDIR
 }
 trap cleanup EXIT HUP INT QUIT ABRT PIPE TERM
