@@ -1,0 +1,14 @@
+=== modified file 'src/unit.c'
+--- old/src/unit.c	2014-09-10 15:51:34 +0000
++++ new/src/unit.c	2015-05-18 14:41:11 +0000
+@@ -37,7 +37,8 @@
+ {
+   Unit *unit = NULL;
+ 
+-  if (g_str_equal (unit_name, "ntpd.service"))
++  if (g_str_equal (unit_name, "ntpd.service") ||
++      g_str_equal (unit_name, "systemd-timesyncd.service"))
+     unit = ntp_unit_get ();
+ 
+   if (g_str_equal (unit_name, "suspend.target"))
+

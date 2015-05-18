@@ -1,3 +1,11 @@
+systemd-shim (9-1bzr4) wily; urgency=medium
+
+  * debian/patches/lp1390120.patch
+    - Cherrypicked: Use the ntp support for 'systemd-timesyncd.service'
+      too (LP: #1390120)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 18 May 2015 10:43:32 -0400
+
 systemd-shim (9-1bzr2) vivid; urgency=medium
 
   * autopkgtests: umount /sys/power/state instead of the source
