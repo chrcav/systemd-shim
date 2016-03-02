@@ -1,3 +1,12 @@
+systemd-shim (9-1bzr4ubuntu1) xenial; urgency=medium
+
+  * debian/patches/dont-override-release-agent.patch: do not override an
+    existing release agent.  If one is defined, something is going on that
+    we don't know about, and we risk stopping user sessions immediately on
+    login (preventing logins).
+
+ -- Serge Hallyn <serge.hallyn@ubuntu.com>  Tue, 01 Mar 2016 20:57:52 -0800
+
 systemd-shim (9-1bzr4) wily; urgency=medium
 
   * debian/patches/lp1390120.patch
